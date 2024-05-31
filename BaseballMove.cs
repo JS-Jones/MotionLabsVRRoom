@@ -8,6 +8,8 @@ public class BaseballMove : MonoBehaviour
     public string objectToDestroyTag = "Glove";
     private Vector3 initialPosition;
     private bool wasThrown = false;
+    private AudioSource audioSource; // ADD TO NEW VERSION
+
 
     /*public GameObject parentGameObject;
     //public GameObject[] parentGameObjects;*/
@@ -21,6 +23,8 @@ public class BaseballMove : MonoBehaviour
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>(); // ADD TO NEW VERSION
+
         if (PlayerPrefs.GetInt("LeftActive", 1) == 1)
         {
             parentGameObject.Add(leftArea);
@@ -93,9 +97,15 @@ public class BaseballMove : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag(objectToDestroyTag) || transform.position.z <= -2)
+        if (other.gameObject.CompareTag(objectToDestroyTag))
         {
+            audioSource.Play();
             // transform.position = initialPosition;
+            wasThrown = false;
+            transform.position = new Vector3(-1, -1, 3); //// Take this line out of its breaking the game
+        }
+        else if (transform.position.z <= -2)
+        {
             wasThrown = false;
         }
     }
