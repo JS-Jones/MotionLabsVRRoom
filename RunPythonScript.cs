@@ -7,19 +7,23 @@ using Debug = UnityEngine.Debug;
 
 public class RunPythonScript : MonoBehaviour
 {
-    private string pythonPath = @"/Users/Awesomekids/opt/anaconda3/bin/python3.9"; // Path to your python executable
-    private string scriptPath = @"/Users/Awesomekids/Desktop/PythonUnityTest/scriptv2.py"; // Path to your script.py
+    private string pythonPath = @"C:\Users\Vicon-OEM\AppData\Local\Microsoft\WindowsApps\python.exe"; // Update to the correct path of your python executable
+    private string scriptPath = @"C:\Users\Vicon-OEM\Desktop\Motions Lab Test 3D\Motions Lab Test 3D\PythonUnityTest\scriptv2.py"; // Update to your script path
 
-    public void RunScript(string command, string[] args = null)
+
+        public void RunScript(string command, string[] args = null)
     {
         if (args == null)
         {
             args = new string[] { };
         }
 
+        string argsString = string.Join(" ", args.Select(arg => $"\"{arg}\""));
+        string arguments = $"\"{scriptPath}\" {command} {argsString}";
+
         ProcessStartInfo start = new ProcessStartInfo();
         start.FileName = pythonPath;
-        start.Arguments = string.Format("{0} {1}", scriptPath, string.Join(" ", new string[] { command }.Concat(args)));
+        start.Arguments = arguments;
         start.UseShellExecute = false;
         start.RedirectStandardOutput = true;
         start.RedirectStandardError = true;
@@ -43,18 +47,14 @@ public class RunPythonScript : MonoBehaviour
         }
     }
 
-    public void PrintString(string value)
+    public void Move(string value)
     {
-        RunScript("print_string", new string[] { value });
+        RunScript("Move", new string[] { value });
+        
     }
 
-    public void Increase()
+    public void Stop()
     {
-        RunScript("increase");
-    }
-
-    public void Decrease()
-    {
-        RunScript("decrease");
+        RunScript("Stop", new string[] { "0" });
     }
 }
