@@ -9,6 +9,9 @@ public class PythonTrigger : MonoBehaviour
     void Start()
     {
         scriptRunner = GetComponent<RunPythonScript>();
+
+        string speed = PlayerPrefs.GetString("StartingSpeed", "0");
+        scriptRunner.Move(speed);
     }
 
     void Update()
@@ -16,20 +19,14 @@ public class PythonTrigger : MonoBehaviour
         // Example: Run script on key press
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Pressed Space");
-            scriptRunner.PrintString("Hello from Unity!");
+            Debug.Log("Emergency Stop");
+            scriptRunner.Stop();
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            Debug.Log("Pressed Up Arrow");
-            scriptRunner.Increase();
-        }
-
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+       /* if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             Debug.Log("Pressed Down Arrow");
-            scriptRunner.Decrease();
-        }
+            scriptRunner.Stop();
+        }*/
     }
 }
