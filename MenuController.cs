@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -8,26 +9,30 @@ public class MenuController : MonoBehaviour
 {
     public bool leftActive = true;
     public bool rightActive = true;
-    public int duration = 60;
-    public float startingSpeed = 0.1f;
+    public int duration = 120;
+    public string startingSpeed = "0.1";
     public string gamemode = "Fixed Positions";
+    public int throwingSpeed = 1;
     public string difficulty = "Easy";
     public bool showMarkers = true;
-    public float timeThrows = 1f;
+    public float timeThrows = 5f;
+    public string inclusivity = "Inclusive";
 
 
     public GameObject startscreen;
     public GameObject optionsscreen;
 
-    public TMP_Text durationText;
-    public TMP_Text speedText;
+    public TMP_InputField durationText;
+    public TMP_InputField speedText;
+    public TMP_InputField throwingSpeedText;
     public TMP_Text gamemodeText;
-    public TMP_Text timethrowsText;
+    public TMP_InputField timethrowsText;
 
     public GameObject subOptions;
 
     public TMP_Dropdown handChoice;
     public TMP_Dropdown difficultyChoice;
+    public TMP_Dropdown inclusivityChoice;
     public TMP_Dropdown markerChoice;
 
     public void StartPlay()
@@ -42,9 +47,11 @@ public class MenuController : MonoBehaviour
         PlayerPrefs.SetInt("LeftActive", leftActive ? 1 : 0);
         PlayerPrefs.SetInt("RightActive", rightActive ? 1 : 0);
         PlayerPrefs.SetInt("Duration", duration);
-        PlayerPrefs.SetFloat("StartingSpeed", startingSpeed);
+        PlayerPrefs.SetInt("ThrowingSpeed", throwingSpeed);
+        PlayerPrefs.SetString("StartingSpeed", startingSpeed);
         PlayerPrefs.SetString("Gamemode", gamemode);
         PlayerPrefs.SetString("Difficulty", difficulty);
+        PlayerPrefs.SetString("Inclusivity", inclusivity);
         PlayerPrefs.SetInt("ShowMarkers", showMarkers ? 1 : 0);
         PlayerPrefs.SetFloat("TimeThrows", timeThrows);
         SceneManager.LoadScene(1);
@@ -71,40 +78,38 @@ public class MenuController : MonoBehaviour
         }
     }
     
-    public void DurationChanged()
+    public void DurationChanged(TMP_InputField x)
     {
         //int sampletext = int.Parse(durationText.text);
         //Debug.Log(sampletext);
         //sampletext = sampletext.Trim();
         //string digitsOnly = RemoveNonDigits(sampletext);
 
-        //duration = int.Parse(digitsOnly);
-        Debug.Log(duration);
+        duration = int.Parse(x.text);
     }
 
-    private string RemoveNonDigits(string s)
+    public void ThrowingSpeedChanged(TMP_InputField x)
     {
-        StringBuilder result = new StringBuilder();
-        foreach (char c in s)
-        {
-            if (!char.IsDigit(c))
-            {
-                result.Append(c);
-            }
-        }
-        return result.ToString();
+        //int sampletext = int.Parse(durationText.text);
+        //Debug.Log(sampletext);
+        //sampletext = sampletext.Trim();
+        //string digitsOnly = RemoveNonDigits(sampletext);
+
+        throwingSpeed = int.Parse(x.text);
     }
 
-    public void SpeedChanged(string text)
+
+    public void SpeedChanged(TMP_InputField x)
     {
-        string sampletext = speedText.text;
-        Debug.Log(sampletext);
+        //print(x);
+        //string sampletext = x;
+        //Debug.Log(sampletext);
         //sampletext = sampletext.Trim();
         //double newtext = double.Parse(sampletext);
         //Debug.Log(newtext);
 
         //PlayerPrefs.SetFloat("StartingSpeed", float.Parse(sampletext));
-        //startingSpeed = float.Parse(sampletext);
+        startingSpeed = x.text;
         //Debug.Log(PlayerPrefs.GetFloat("StartingSpeed", (float)0.1));
 
     }
@@ -145,6 +150,19 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    public void InclusivityHandler()
+    {
+        if (inclusivityChoice.value == 0)
+        {
+            Debug.Log("Inclusive");
+            difficulty = "Inclusive";
+        }
+        if (inclusivityChoice.value == 1)
+        {
+            difficulty = "Non Inclusive";
+        }
+    }
+
     public void MarkerHandler()
     {
         if (markerChoice.value == 0)
@@ -158,13 +176,10 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void TimeThrowsChanged(string text)
+    public void TimeThrowsChanged(TMP_InputField x)
     {
-        string sampletext = timethrowsText.text;
-
-        sampletext = sampletext.Trim();
-        timeThrows = float.Parse(sampletext);
-        Debug.Log(timeThrows);
+ 
+        timeThrows = float.Parse(x.text);
 
     }
     /* Use if using a button approach
