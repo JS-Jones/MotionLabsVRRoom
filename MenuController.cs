@@ -1,204 +1,370 @@
-using System.Globalization;
-using System.Text;
-using TMPro;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class MenuController : MonoBehaviour
-
+public class BaseballMove : MonoBehaviour
 {
-    public bool leftActive = true;
-    public bool rightActive = true;
-    public int duration = 120;
-    public string startingSpeed = "0.1";
-    public string gamemode = "Fixed Positions";
-    public int throwingSpeed = 1;
-    public string difficulty = "Easy";
-    public bool showMarkers = true;
-    public float timeThrows = 5f;
-    public string inclusivity = "Inclusive";
+    public int moveSpeed = 1;
+    public float timeBetweenThrows = 5f;
+    public string objectToDestroyTag = "Glove";
+    private Vector3 initialPosition;
+    private bool wasThrown = false;
+    private AudioSource audioSource; // ADD TO NEW VERSION
 
 
-    public GameObject startscreen;
-    public GameObject optionsscreen;
+    /*public GameObject parentGameObject;
+    //public GameObject[] parentGameObjects;*/
+    public GameObject childGameObject;
+    public GameObject target;
 
-    public TMP_InputField durationText;
-    public TMP_InputField speedText;
-    public TMP_InputField throwingSpeedText;
-    public TMP_Text gamemodeText;
-    public TMP_InputField timethrowsText;
+    public List<GameObject> parentGameObject;
+    public GameObject rightArea;
+    public GameObject leftArea;
 
-    public GameObject subOptions;
 
-    public TMP_Dropdown handChoice;
-    public TMP_Dropdown difficultyChoice;
-    public TMP_Dropdown inclusivityChoice;
-    public TMP_Dropdown markerChoice;
-
-    public void StartPlay()
+    void Start()
     {
-        optionsscreen.SetActive(true);
-        startscreen.SetActive(false);
-  
-    }
+        moveSpeed = PlayerPrefs.GetInt("ThrowingSpeed", 1);
+        Debug.Log(moveSpeed);
+        timeBetweenThrows = PlayerPrefs.GetFloat("TimeThrows", 5f);
+        Debug.Log(timeBetweenThrows);
 
-    public void Play()
-    {
-        PlayerPrefs.SetInt("LeftActive", leftActive ? 1 : 0);
-        PlayerPrefs.SetInt("RightActive", rightActive ? 1 : 0);
-        PlayerPrefs.SetInt("Duration", duration);
-        PlayerPrefs.SetInt("ThrowingSpeed", throwingSpeed);
-        PlayerPrefs.SetString("StartingSpeed", startingSpeed);
-        PlayerPrefs.SetString("Gamemode", gamemode);
-        PlayerPrefs.SetString("Difficulty", difficulty);
-        PlayerPrefs.SetString("Inclusivity", inclusivity);
-        PlayerPrefs.SetInt("ShowMarkers", showMarkers ? 1 : 0);
-        PlayerPrefs.SetFloat("TimeThrows", timeThrows);
-        SceneManager.LoadScene(1);
-       
-    }
+        audioSource = GetComponent<AudioSource>(); // ADD TO NEW VERSION
 
-    public void HandChoiceHandler()
-    {
-        if (handChoice.value == 0)
+        if (PlayerPrefs.GetInt("LeftActive", 1) == 1)
         {
-            Debug.Log("both Hands");
-            leftActive = true;
-            rightActive = true;
+            parentGameObject.Add(leftArea);
         }
-        if (handChoice.value == 1)
+        if (PlayerPrefs.GetInt("Right Active", 1) == 1)
         {
-            leftActive = true;
-            rightActive = false;
+            parentGameObject.Add(rightArea);
         }
-        if (handChoice.value == 2)
+        if (PlayerPrefs.GetString("Gamemode", "Fixed Positions").Equals("Fixed Positions"))
         {
-            leftActive = false;
-            rightActive = true;
-        }
-    }
-    
-    public void DurationChanged(TMP_InputField x)
-    {
-        //int sampletext = int.Parse(durationText.text);
-        //Debug.Log(sampletext);
-        //sampletext = sampletext.Trim();
-        //string digitsOnly = RemoveNonDigits(sampletext);
 
-        duration = int.Parse(x.text);
-    }
-
-    public void ThrowingSpeedChanged(TMP_InputField x)
-    {
-        //int sampletext = int.Parse(durationText.text);
-        //Debug.Log(sampletext);
-        //sampletext = sampletext.Trim();
-        //string digitsOnly = RemoveNonDigits(sampletext);
-
-        throwingSpeed = int.Parse(x.text);
-    }
-
-
-    public void SpeedChanged(TMP_InputField x)
-    {
-        //print(x);
-        //string sampletext = x;
-        //Debug.Log(sampletext);
-        //sampletext = sampletext.Trim();
-        //double newtext = double.Parse(sampletext);
-        //Debug.Log(newtext);
-
-        //PlayerPrefs.SetFloat("StartingSpeed", float.Parse(sampletext));
-        startingSpeed = x.text;
-        //Debug.Log(PlayerPrefs.GetFloat("StartingSpeed", (float)0.1));
-
-    }
-
-    public void Gamemode(string text)
-    {
-        string sampletext = gamemodeText.text;
-
-        sampletext = sampletext.Trim();
-        
-        if (sampletext.Equals("Fixed Positions")){
-            subOptions.SetActive(true);
-            gamemode = sampletext;
-
-        } 
-        if (sampletext.Equals("Free Moving"))
-        {
-            subOptions.SetActive(false);
-            gamemode = sampletext;
-        }
-
-    }
-
-    public void DifficultyHandler()
-    {
-        if (difficultyChoice.value == 0)
-        {
-            Debug.Log("Easy");
-            difficulty = "Easy";
-        }
-        if (difficultyChoice.value == 1)
-        {
-            difficulty = "Medium";
-        }
-        if (difficultyChoice.value == 2)
-        {
-            difficulty = "Hard";
+            //new WaitForSeconds(7);
+            StartCoroutine(RoundRepeater());
         }
     }
 
-    public void InclusivityHandler()
+    void Update()
     {
-        if (inclusivityChoice.value == 0)
+        if (PlayerPrefs.GetString("Gamemode", "Fixed Positions").Equals("Free Moving"))
         {
-            Debug.Log("Inclusive");
-            difficulty = "Inclusive";
-        }
-        if (inclusivityChoice.value == 1)
-        {
-            difficulty = "Non Inclusive";
+
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                transform.Translate(Vector3.left * Time.deltaTime * moveSpeed);
+            }
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                transform.Translate(Vector3.right * Time.deltaTime * moveSpeed);
+            }
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                transform.Translate(Vector3.up * Time.deltaTime * moveSpeed);
+            }
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+                transform.Translate(Vector3.down * Time.deltaTime * moveSpeed);
+            }
+            if (Input.GetKeyDown(KeyCode.Return) && wasThrown == false)
+            {
+                initialPosition = transform.position;
+                // print("IP: " + initialPosition);
+                wasThrown = true;
+                StartCoroutine(ThrowObject());
+
+            }
         }
     }
 
-    public void MarkerHandler()
+    IEnumerator ThrowObject()
     {
-        if (markerChoice.value == 0)
+        Vector3 throwDirection = -Vector3.forward;
+        while (transform.position.z > -2)
         {
-            Debug.Log("true");
-            showMarkers = true;
+            transform.Translate(moveSpeed * Time.deltaTime * throwDirection);
+            if (wasThrown == false)
+            {
+                //target.SetActive(false);
+                if (PlayerPrefs.GetString("Gamemode", "Fixed Positions").Equals("Free Moving"))
+                {
+                    transform.position = initialPosition;
+                }
+                else
+                {
+                    target.SetActive(false);
+                    transform.position = new Vector3(-1, -1, 3);
+                } 
+                yield break;
+            }
+            yield return null;
         }
-        if (markerChoice.value == 1)
+
+        //transform.position = new Vector3(-1, -1, 3);
+        if (PlayerPrefs.GetString("Gamemode", "Fixed Positions").Equals("Fixed Positions"))
         {
-            showMarkers = false;
+            target.SetActive(false);
+        }
+        wasThrown = false;
+        yield break; // Exit the coroutine
+
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag(objectToDestroyTag))
+        {
+            audioSource.Play();
+            // transform.position = initialPosition;
+            wasThrown = false;
+            transform.position = new Vector3(-1, -1, 3); //// Take this line out of its breaking the game
+        }
+        else if (transform.position.z <= -2)
+        {
+            wasThrown = false;
         }
     }
 
-    public void TimeThrowsChanged(TMP_InputField x)
+    IEnumerator RoundRepeater()
     {
- 
-        timeThrows = float.Parse(x.text);
+        List<Transform> AreaList = AvailablePosition();
+        while (true)
+        {
+            // Move the block to a random position
+            Transform randomPosition = MoveBlockToRandom(AreaList);
 
+            // Move the block to the chosen position, keeping its z coordinate unchanged
+            transform.position = new Vector3(randomPosition.position.x, randomPosition.position.y, 3);
+
+            //transform.position = initialPosition;
+            // Wait for the specified interval before moving again
+
+
+            wasThrown = true;
+            StartCoroutine(ThrowObject());
+            yield return new WaitForSeconds(timeBetweenThrows);
+        }
     }
-    /* Use if using a button approach
-        public void Left()
+
+    public List<Transform> AvailablePosition()
+    {
+        List<Transform> randomPositions = new List<Transform>();
+        for (int y = 0; y < parentGameObject.Count; y++)
         {
-            leftActive = true; 
-            print("leftActive set true");
+            if (PlayerPrefs.GetString("Difficulty", "Easy").Equals("Easy"))
+            {
+                Transform difficulty = parentGameObject[y].transform.Find("Easy");
+                if (difficulty != null)
+                {
+                    childGameObject = difficulty.gameObject;
+                }
+
+                for (int i = 0; i < childGameObject.transform.childCount; i++)
+                {
+                    randomPositions.Add(childGameObject.transform.GetChild(i));
+                }
+
+            }
+
+
+            else if (PlayerPrefs.GetString("Difficulty", "Easy").Equals("Medium"))
+            {
+                Transform difficulty = parentGameObject[y].transform.Find("Medium");
+                if (difficulty != null)
+                {
+                    childGameObject = difficulty.gameObject;
+                }
+
+                if (PlayerPrefs.GetString("Inclusivity", "Inclusive").Equals("Inclusive"))
+                {
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+                    childGameObject = parentGameObject[y].transform.Find("Easy").gameObject;
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+                }
+            }
+            else if (PlayerPrefs.GetString("Difficulty", "Easy").Equals("Hard"))
+            {
+                Transform difficulty = parentGameObject[y].transform.Find("Hard");
+                if (difficulty != null)
+                {
+                    childGameObject = difficulty.gameObject;
+                }
+
+                if (PlayerPrefs.GetString("Inclusivity", "Inclusive").Equals("Inclusive"))
+                {
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+                    childGameObject = parentGameObject[y].transform.Find("Easy").gameObject;
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+                    childGameObject = parentGameObject[y].transform.Find("Medium").gameObject;
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+                }
+            }
+        }
+        return randomPositions;
+    }
+
+    public Transform MoveBlockToRandom(List<Transform> randomPositions)
+    {
+        if (randomPositions.Count == 0)
+        {
+            Debug.LogError("No child positons found under randomPositonsParent");
         }
 
-        public void Right()
+        int randomIndex = Random.Range(0, randomPositions.Count);
+        Transform randomPosition = randomPositions[randomIndex];
+        target = randomPosition.gameObject;
+        if (PlayerPrefs.GetInt("ShowMarkers", 1) == 1)
         {
-            rightActive = true; 
+            target.SetActive(true);
         }
 
-        public void Both()
+        return (randomPosition);
+    }
+
+    /*
+        public Transform MoveBlockToRandom()
         {
-            leftActive = true; 
-            rightActive = true; 
+            List<Transform> randomPositions = new();
+
+
+            //PlayerPrefs.SetString("Difficulty", "Easy"); // REMOVE THIS
+            // Get all the children of the randomPositionsParent
+            if (PlayerPrefs.GetString("Difficulty", "Easy").Equals("Easy"))
+            {
+                Transform difficulty = parentGameObject.transform.Find("Easy");
+
+                if (difficulty != null)
+                {
+                    childGameObject = difficulty.gameObject;
+
+                }
+
+                for (int i = 0; i < childGameObject.transform.childCount; i++)
+                {
+                    randomPositions.Add(childGameObject.transform.GetChild(i));
+                }
+
+                //childTransform = difficulty;
+            }
+            else if (PlayerPrefs.GetString("Difficulty", "Easy").Equals("Medium"))
+            {
+                Transform difficulty = parentGameObject.transform.Find("Medium");
+
+                if (difficulty != null)
+                {
+                    childGameObject = difficulty.gameObject;
+
+                }
+
+
+
+                if (PlayerPrefs.GetInt("Inclusive", 1) == 1) // Add this option
+                {
+                    // Get all the children from each randomPositionsParent
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+
+                    childGameObject = parentGameObject.transform.Find("Easy").gameObject;
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        Debug.Log("truewwwww");
+
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+                }
+
+            }
+            else if (PlayerPrefs.GetString("Difficulty", "Easy").Equals("Hard"))
+            {
+                Transform difficulty = parentGameObject.transform.Find("Hard");
+
+                if (difficulty != null)
+                {
+                    childGameObject = difficulty.gameObject;
+
+                }
+
+                if (PlayerPrefs.GetInt("Inclusive", 1) == 1) // Add this option
+                {
+                    // Get all the children from each randomPositionsParent
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+
+                    childGameObject = parentGameObject.transform.Find("Easy").gameObject;
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        //Debug.Log("truewwwww");
+
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+                    childGameObject = parentGameObject.transform.Find("Medium").gameObject;
+                    for (int i = 0; i < childGameObject.transform.childCount; i++)
+                    {
+                        //Debug.Log("truewwwww");
+
+                        randomPositions.Add(childGameObject.transform.GetChild(i));
+                    }
+                }
+
+            }
+
+            //int childCount = childGameObject.transform.childCount;
+
+            if (randomPositions.Count == 0)
+            {
+                Debug.LogError("No child positions found under randomPositionsParent.");
+            }
+
+            int randomIndex = Random.Range(0, randomPositions.Count);
+            Transform randomPosition = randomPositions[randomIndex];
+            target = randomPosition.gameObject;
+            target.SetActive(true);
+
+            // Choose a random index
+            //int randomIndex = Random.Range(0, childCount);
+
+            // Get the child transform at the random index
+            // Transform randomPosition = childGameObject.transform.GetChild(randomIndex);
+            ////Debug.Log(randomPosition.position.x);
+            // //Debug.Log(randomPosition.position.y);
+
+            return (randomPosition);
+
         }*/
-
 }
-
