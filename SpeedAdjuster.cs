@@ -6,14 +6,12 @@ public class SpeedAdjuster : MonoBehaviour
 {
     public TMPro.TextMeshProUGUI SpeedUI;
 
-    // Start is called before the first frame update
     void Start()
     {
         string textValue = SpeedUI.text;
-        Debug.Log("The Text value is " + textValue);
+        
     }
 
-    // Update is called once per frame
     void Update()
     {
         
