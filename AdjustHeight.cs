@@ -7,7 +7,7 @@ public class AdjustHeight : MonoBehaviour
     // Speed of upward and downward movement
     public float moveSpeed = 5;
 
-    // Update is called once per frame
+    // Actuve when free moving selected
     void Update()
     {
         if (Input.GetKey(KeyCode.W)) {
