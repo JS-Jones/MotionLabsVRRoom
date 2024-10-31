@@ -4,7 +4,7 @@
 **[Overview Video](https://youtu.be/WeSLgrjOITQ)**
 
 
-[![Live Biofeedback Demo](./imagimes/video-thumbnail2.jpg)](https://youtu.be/pLctNduYrzg)
+[![Live Biofeedback Demo](./images/video-thumbnail2.jpg)](https://youtu.be/pLctNduYrzg)
 **[Live Biofeedback Demo](https://youtu.be/pLctNduYrzg)**
 
 ## What the Project Does
