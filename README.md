@@ -36,11 +36,9 @@ To get started with the Motion Labs VR Gamification Project, follow these steps:
 
 3. **Run the Program**: Launch the Unity project, connect your motion capture and EEG devices, and initiate the VR program to begin a session.
 
-For a visual guide on setting up and using the project, check out our [videos](#) and [images](#) showcasing how to configure and use the program.
-
 ## Maintainers and Contributors
 
-This project is co-created by **Joshua Jones** and the Motion Labs team at [University of Rochester](https://www.rochester.edu/).
+This project is co-created by **Joshua Jones** and the Motion Labs team at [University of Rochester](https://www.rochester.edu/). All content belongs to Motion Labs.
 
 ---
 
