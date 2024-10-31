@@ -1,5 +1,12 @@
 # Motion Labs VR Gamification Project
 
+[![Overview Video](./images/video-thumbnail1.jpg)](https://youtu.be/WeSLgrjOITQ)
+**[Overview Video](https://youtu.be/WeSLgrjOITQ)**
+
+
+[![Live Biofeedback Demo](./imagimes/video-thumbnail2.jpg)](https://youtu.be/pLctNduYrzg)
+**[Live Biofeedback Demo](https://youtu.be/pLctNduYrzg)**
+
 ## What the Project Does
 
 The Motion Labs VR Gamification Project leverages a unique integration of VR, motion capture, force plate treadmills, and EEGs (electroencephalograms) to enhance rehabilitation practices for patients. This VR program creates an interactive and engaging experience, allowing patients to participate in gamified exercises that promote movement and recovery in an enjoyable way. The system provides live biofeedback from EEG data to help users and clinicians understand brain activity patterns during the rehabilitation process, which supports better engagement and tracking of progress.
