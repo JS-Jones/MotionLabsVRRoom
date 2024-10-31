@@ -1,10 +1,10 @@
 # Motion Labs VR Gamification Project
 
-[![Overview Video](./images/video-thumbnail1.jpg)](https://youtu.be/WeSLgrjOITQ)
+[![Overview Video](./images/video-thumbnail2.jpg)](https://youtu.be/WeSLgrjOITQ)
 **[Overview Video](https://youtu.be/WeSLgrjOITQ)**
 
 
-[![Live Biofeedback Demo](./images/video-thumbnail2.jpg)](https://youtu.be/pLctNduYrzg)
+[![Live Biofeedback Demo](./images/video-thumbnail1.jpg)](https://youtu.be/pLctNduYrzg)
 **[Live Biofeedback Demo](https://youtu.be/pLctNduYrzg)**
 
 ## What the Project Does
